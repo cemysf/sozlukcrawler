@@ -12,3 +12,4 @@ class Girdi(scrapy.Item):
     text = scrapy.Field()
     datetime = scrapy.Field()
     nick = scrapy.Field()
+    linkler = scrapy.Field()

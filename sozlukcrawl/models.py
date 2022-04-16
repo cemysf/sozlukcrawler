@@ -2,7 +2,7 @@ __author__ = 'Eren Turkay <turkay.eren@gmail.com>'
 
 from scrapy.utils.project import get_project_settings
 
-from sqlalchemy import create_engine, Column, Integer, String, Text, DateTime
+from sqlalchemy import create_engine, Column, Integer, String, Text, DateTime, ARRAY
 from sqlalchemy.engine.url import URL
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
@@ -40,6 +40,7 @@ class Girdi(Base):
     text = Column('text', Text)
     datetime = Column('datetime', DateTime)
     nick = Column('nick', String(255))
+    linkler = Column('linkler', ARRAY(String))  ## girdi icindeki linkler
 
     def __repr__(self):
         return '<Girdi %s: %s>' % (self.girdi_id, self.text)
@@ -60,9 +61,9 @@ class Seen(Base):
 
 
 if __name__ == '__main__':
-    print 'Connecting to db'
+    print('Connecting to db')
 
-    print 'Creating tables'
+    print('Creating tables')
     create_tables()
 
     session.close()

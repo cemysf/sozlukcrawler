@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from scrapy import Spider
-from scrapy import log
+import logging
 from scrapy.http import Request
 from scrapy.exceptions import CloseSpider
 
@@ -24,9 +24,12 @@ class GenericSozlukSpider(Spider):
         self.urls = kwargs['baslik'].split(',')
         self.allowed_domains = []
 
+    def log(self, *args, **kwargs):
+        logging.log(kwargs["level"], args[0])
+
     def start_requests(self):
         self.log('Eliminating already seen web pages. If you think crawler is not working '
-                 'please check "seen" table in the database', level=log.WARNING)
+                 'please check "seen" table in the database', level=logging.WARNING)
 
         return [Request(i) for i in self.urls if not is_request_seen(Request(i))]
 

@@ -1,33 +1,33 @@
 # -*- coding: utf-8 -*-
 __author__ = 'Eren Turkay <turkay.eren@gmail.com>'
 
-from scrapy import log
+import logging
 from scrapy.http import Request
 from scrapy.exceptions import CloseSpider
 
 from datetime import datetime
-from urlparse import urlsplit
+from urllib.parse import urlsplit
 import re
 
 from . import GenericSozlukSpider
 from ..items import Girdi
 
 
-class ItusozlukBaslikSpider(GenericSozlukSpider):
+class UludagsozlukBaslikSpider(GenericSozlukSpider):
     name = 'uludagsozluk'
 
     def __init__(self, **kwargs):
-        super(ItusozlukBaslikSpider, self).__init__(**kwargs)
+        super(UludagsozlukBaslikSpider, self).__init__(**kwargs)
 
         self.allowed_domains = ['uludagsozluk.com']
 
     def parse(self, response):
-        self.log("PARSING: %s" % response.request.url, level=log.INFO)
+        self.log("PARSING: %s" % response.request.url, level=logging.INFO)
 
         items_to_scrape = response.xpath('//*[@id="entry-list"]/li/article')
         if len(items_to_scrape) == 0:
             self.log("!!! No item to parse found. It may indicate a problem with HTML !!!",
-                     level=log.ERROR)
+                     level=logging.ERROR)
             raise CloseSpider('no_item_found')
 
         for sel in items_to_scrape:

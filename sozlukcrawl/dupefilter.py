@@ -2,8 +2,8 @@ __author__ = 'Eren Turkay <turkay.eren@gmail.com>'
 
 from datetime import datetime
 
-from scrapy.dupefilter import BaseDupeFilter
-from scrapy import log
+from scrapy.dupefilters import BaseDupeFilter
+import logging
 from scrapy.utils.request import request_fingerprint
 
 from .models import Seen, session, create_tables
@@ -14,11 +14,14 @@ class DatabaseDupeFilter(BaseDupeFilter):
     def __init__(self):
         create_tables()
 
+    def log(self, *args, **kwargs):
+        logging.log(kwargs["level"], args[0])
+
     def request_seen(self, request):
         is_seen = is_request_seen(request)
 
         if not is_seen:
-            log.msg('New URL: %s. Adding it to seen database' % request.url, log.DEBUG)
+            self.log('New URL: %s. Adding it to seen database' % request.url, level=logging.DEBUG)
             seen = Seen(fingerprint=request_fingerprint(request),
                         url=request.url,
                         last_crawl_time=datetime.now())
@@ -31,6 +34,6 @@ class DatabaseDupeFilter(BaseDupeFilter):
             finally:
                 session.close()
         else:
-            log.msg('[seen] "%s" is seen. Skipping.' % request.url, log.INFO)
+            self.log('[seen] "%s" is seen. Skipping.' % request.url, level=logging.INFO)
 
         return is_seen

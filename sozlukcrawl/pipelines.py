@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from scrapy import log
+import logging
 from .models import session, Girdi, create_tables
 
 
@@ -8,6 +8,9 @@ class DatabasePipeline(object):
     def __init__(self):
         create_tables()
     
+    def log(self, *args, **kwargs):
+        logging.log(kwargs["level"], args[0])
+
     def process_item(self, item, spider):
         """
         Scrape edilen her girdiyi veritabanina ekle. Bu method sayfa process edildikten, icerisindeki
@@ -20,9 +23,9 @@ class DatabasePipeline(object):
         :return: Gonderilen Item
         :rtype: Scrapy item
         """
-        log.msg('[%s] PROCESSING ITEM [item no: %s, baslik: %s]' %
+        self.log('[%s] PROCESSING ITEM [item no: %s, baslik: %s]' %
                 (spider.name, item['girdi_id'], item['baslik']),
-                level=log.DEBUG)
+                level=logging.DEBUG)
 
         girdi = Girdi(**item)
         try:

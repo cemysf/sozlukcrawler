@@ -17,10 +17,10 @@
 #
 # SQLite Ayari
 # ============
-DATABASE = {
-    'drivername': 'sqlite',
-    'database': 'db.sqlite'
-}
+# DATABASE = {
+#     'drivername': 'sqlite',
+#     'database': 'db.sqlite'
+# }
 #
 #
 # PostgreSQL ve MySQL kullanmak istiyorsaniz ne yaptiginizi bildiginizi varsayarak veritabani ve
@@ -28,14 +28,14 @@ DATABASE = {
 #
 # PostgreSQL
 # ==========
-# DATABASE = {
-#     'drivername': 'postgresql+psycopg2',
-#     'host': 'localhost',
-#     'port': '5432',
-#     'username': 'sozlukcrawl',
-#     'password': 'sozlukcrawl',
-#     'database': 'sozlukcrawl'
-# }
+DATABASE = {
+    'drivername': 'postgresql+psycopg2',
+    'host': 'localhost',
+    'port': '5432',
+    'username': 'sozlukcrawl',
+    'password': 'sozlukcrawl',
+    'database': 'sozlukcrawl'
+}
 
 
 # MySQL
@@ -66,7 +66,7 @@ DOWNLOADER_MIDDLEWARES = {
 }
 
 ITEM_PIPELINES = {
-    'sozlukcrawl.pipelines.DatabasePipeline',
+    'sozlukcrawl.pipelines.DatabasePipeline': 0,
 }
 
 DUPEFILTER_CLASS = 'sozlukcrawl.dupefilter.DatabaseDupeFilter'

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 __author__ = 'Eren Turkay <turkay.eren@gmail.com>'
 
-from scrapy import log
+import logging
 from scrapy.http import Request
 from scrapy.exceptions import CloseSpider
 
@@ -16,25 +16,25 @@ class EksisozlukBaslikSpider(GenericSozlukSpider):
 
     def __init__(self, **kwargs):
         super(EksisozlukBaslikSpider, self).__init__(**kwargs)
-
         self.allowed_domains = ['eksisozluk.com']
 
     def parse(self, response):
-        self.log("PARSING: %s" % response.request.url, level=log.INFO)
+        self.log("PARSING: %s" % response.request.url, level=logging.INFO)
 
-        items_to_scrape = response.xpath('//*[@id="topic"]/ul[@id="entry-list"]/li')
+        items_to_scrape = response.xpath('//*[@id="entry-item-list"]/li[@data-author]')
         if len(items_to_scrape) == 0:
             self.log("!!! No item to parse found. It may indicate a problem with HTML !!!",
-                     level=log.ERROR)
+                     level=logging.ERROR)
             raise CloseSpider('no_item_found')
 
         for sel in items_to_scrape:
             girdi_id = sel.xpath('./@data-id').extract()[0]
             baslik_id = response.xpath('//*[@id="title"]/a/@href').re(r'--(\d*)')[0]
             baslik = response.xpath('//*[@id="title"]/a/span/text()').extract()[0]
-            date = sel.xpath('./footer/div[@class="info"]/a[@class="entry-date permalink"]/text()').re(r'\d{2}[.]\d{2}[.]\d{4} \d{2}[:]\d{2}')[0]
+            date = sel.xpath('./footer/div[@class="info"]/div[@class="entry-footer-bottom"]/div[@class="footer-info"]/div[2]/a/text()').re(r'\d{2}[.]\d{2}[.]\d{4} \d{2}[:]\d{2}')[0]
             text = sel.xpath('string(./div)').extract()[0]
-            nick = sel.xpath('./footer/div[@class="info"]/a[@class="entry-author"]/text()').extract()[0]
+            linkler = sel.xpath('./div/a/@href').extract()
+            nick = sel.xpath('./@data-author').extract()[0]
 
             item = Girdi()
             item['source'] = self.name
@@ -43,6 +43,7 @@ class EksisozlukBaslikSpider(GenericSozlukSpider):
             item['baslik_id'] = baslik_id
             item['datetime'] = datetime.strptime(date, '%d.%m.%Y %H:%M')
             item['text'] = text
+            item['linkler'] = linkler
             item['nick'] = nick
 
             yield item
@@ -50,8 +51,8 @@ class EksisozlukBaslikSpider(GenericSozlukSpider):
         # Sozluk sayfalamayi javascript ile yapiyor, dolayisi ile sayfa linkini XPath ile alamiyoruz ancak kacinci
         # sayfada oldugumuz ve son sayfa html icerisinde yer aliyor. Bu bilgileri kullanarak crawl edilecek bir
         # sonraki sayfanin adresini belirle. SSG degistirmez umarim :(
-        current_page = int(response.xpath('//*[@id="topic"]/div[2]/@data-currentpage').extract()[0])
-        page_count = int(response.xpath('//*[@id="topic"]/div[2]/@data-pagecount').extract()[0])
+        current_page = int(response.xpath('(//div[@class="pager"])[1]/@data-currentpage').extract()[0])
+        page_count = int(response.xpath('(//div[@class="pager"])[1]/@data-pagecount').extract()[0])
 
         current_url = response.request.url.split('?p')[0]
 
