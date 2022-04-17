@@ -2,24 +2,53 @@
 DROP TABLE girdiler;
 DROP TABLE seen;
 
+
 -- baslik sil
-DELETE FROM girdiler WHERE baslik LIKE '%sıfırdan tanışılıp sabaha kadar konuşulan o gece%';
-DELETE FROM seen WHERE url LIKE '%sifirdan-tanisilip-sabaha-kadar-konusulan-o-gece%';
+DELETE FROM girdiler
+WHERE baslik LIKE '%sıfırdan tanışılıp sabaha kadar konuşulan o gece%';
+
+DELETE FROM seen
+WHERE url LIKE '%sifirdan-tanisilip-sabaha-kadar-konusulan-o-gece%';
+
 
 -- json cikti al
 SELECT
-    json_agg(json_build_object(
-        'id', id,
-        'source', source,
-        'girdi_id', girdi_id,
-        'baslik_id', baslik_id,
-        'baslik', baslik,
-        'text', text,
-        'datetime', datetime,
-        'nick', nick,
-        'linkler', linkler
-    ))
+    json_agg(json_build_object('id', id, 'source', source, 'girdi_id', girdi_id, 'baslik_id', baslik_id, 'baslik', baslik, 'text', text, 'datetime', datetime, 'nick', nick, 'linkler', linkler))
 FROM
     girdiler;
 
+
+-- fav sayisina gore sirala
+SELECT
+    baslik,
+    favlanma_sayisi,
+    text
+FROM
+    girdiler
+ORDER BY
+    favlanma_sayisi DESC;
+
+
+-- metadata uret
+SELECT
+    table_schema,
+    table_name,
+    ordinal_position AS position,
+    column_name,
+    data_type,
+    CASE WHEN character_maximum_length IS NOT NULL THEN
+        character_maximum_length
+    ELSE
+        numeric_precision
+    END AS max_length,
+    is_nullable,
+    column_default AS default_value
+FROM
+    information_schema.columns
+WHERE
+    table_schema NOT IN ('information_schema', 'pg_catalog')
+ORDER BY
+    table_schema,
+    table_name,
+    ordinal_position;
 

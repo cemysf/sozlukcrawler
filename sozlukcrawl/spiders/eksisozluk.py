@@ -35,6 +35,7 @@ class EksisozlukBaslikSpider(GenericSozlukSpider):
             text = sel.xpath('string(./div)').extract()[0]
             linkler = sel.xpath('./div/a/@href').extract()
             nick = sel.xpath('./@data-author').extract()[0]
+            favlanma_sayisi = int(sel.xpath('./@data-favorite-count').extract()[0])
 
             item = Girdi()
             item['source'] = self.name
@@ -45,6 +46,7 @@ class EksisozlukBaslikSpider(GenericSozlukSpider):
             item['text'] = text
             item['linkler'] = linkler
             item['nick'] = nick
+            item['favlanma_sayisi'] = favlanma_sayisi
 
             yield item
 

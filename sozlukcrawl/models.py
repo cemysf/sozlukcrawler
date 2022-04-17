@@ -41,6 +41,7 @@ class Girdi(Base):
     datetime = Column('datetime', DateTime)
     nick = Column('nick', String(255))
     linkler = Column('linkler', ARRAY(String))  ## girdi icindeki linkler
+    favlanma_sayisi = Column('favlanma_sayisi', Integer)
 
     def __repr__(self):
         return '<Girdi %s: %s>' % (self.girdi_id, self.text)

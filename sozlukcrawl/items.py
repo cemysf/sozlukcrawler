@@ -13,3 +13,4 @@ class Girdi(scrapy.Item):
     datetime = scrapy.Field()
     nick = scrapy.Field()
     linkler = scrapy.Field()
+    favlanma_sayisi = scrapy.Field()
