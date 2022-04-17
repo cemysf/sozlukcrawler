@@ -1,0 +1,25 @@
+-- tum verileri sil
+DROP TABLE girdiler;
+DROP TABLE seen;
+
+-- baslik sil
+DELETE FROM girdiler WHERE baslik LIKE '%sıfırdan tanışılıp sabaha kadar konuşulan o gece%';
+DELETE FROM seen WHERE url LIKE '%sifirdan-tanisilip-sabaha-kadar-konusulan-o-gece%';
+
+-- json cikti al
+SELECT
+    json_agg(json_build_object(
+        'id', id,
+        'source', source,
+        'girdi_id', girdi_id,
+        'baslik_id', baslik_id,
+        'baslik', baslik,
+        'text', text,
+        'datetime', datetime,
+        'nick', nick,
+        'linkler', linkler
+    ))
+FROM
+    girdiler;
+
+
